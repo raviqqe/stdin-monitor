@@ -39,7 +39,7 @@ export default class extends Transform {
   }
 
   createReport(line) {
-    this.totalBytes += Buffer.from(line).length;
+    this.totalBytes += Buffer.byteLength(line);
     this.totalLines++;
 
     return {
