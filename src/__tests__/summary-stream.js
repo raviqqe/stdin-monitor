@@ -13,10 +13,12 @@ test("Write to a summary stream", () => {
 test("Read from a summary stream", done => {
   const stream = new SummaryStream();
 
-  stream.write({ elapsedMilliseconds: 333, totalBytes: 100 });
+  stream.write({ elapsedMilliseconds: 333, totalBytes: 100, totalLines: 42 });
 
   stream.on("readable", () => {
-    expect(stream.read()).toBe("Throughput rate: 300 bytes / sec");
+    expect(stream.read()).toBe(
+      "Throughput rate: 300 bytes / sec, Total lines: 42"
+    );
 
     done();
   });
@@ -25,11 +27,11 @@ test("Read from a summary stream", done => {
 test("Set verbose option", done => {
   const stream = new SummaryStream(true);
 
-  stream.write({ elapsedMilliseconds: 333, totalBytes: 100 });
+  stream.write({ elapsedMilliseconds: 333, totalBytes: 100, totalLines: 42 });
 
   stream.on("readable", () => {
     expect(stream.read()).toBe(
-      "I'm VERBOSE!!! - Throughput rate: 300 bytes / sec"
+      "I'm VERBOSE!!! - Throughput rate: 300 bytes / sec, Total lines: 42"
     );
 
     done();
