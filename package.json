@@ -5,8 +5,7 @@
 		"all": "npm run build && npm run lint && npm run test",
 		"build": "babel src -d dist",
 		"lint": "eslint src/**/*.js",
-		"test": "jest",
-		"preinstall": "npm run all"
+		"test": "jest"
 	},
 	"bin": {
 		"monitor-cat": "dist/index.js"
