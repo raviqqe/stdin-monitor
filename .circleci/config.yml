@@ -14,3 +14,6 @@ jobs:
       - run: |
           bundler install
           bundler exec cucumber script=$(readlink -f dist/index.js)
+      - run: |
+          npm install -g codecov
+          codecov
