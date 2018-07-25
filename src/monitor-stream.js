@@ -10,14 +10,8 @@ export default class extends Duplex {
   }
 
   _write(chunk, encoding, callback) {
-    if (Buffer.isBuffer(chunk)) {
-      this.totalBytes += chunk.length;
-      chunk = chunk.toString();
-    } else {
-      this.totalBytes += Buffer.byteLength(chunk);
-    }
-
-    this.totalLines += (chunk.match(/\n/g) || []).length;
+    this.totalBytes += chunk.length;
+    this.totalLines += (chunk.toString().match(/\n/g) || []).length;
 
     callback();
   }

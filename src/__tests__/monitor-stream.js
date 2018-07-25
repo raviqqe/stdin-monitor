@@ -15,6 +15,7 @@ test("Write to a monitor stream", () => {
 
   stream.write("foo");
   stream.write("bar");
+  stream.write(Buffer.from("baz"));
 });
 
 test("Read from a monitor stream", done => {
