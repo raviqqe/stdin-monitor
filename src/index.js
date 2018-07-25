@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { stdin } from "process";
 import { pipeline, Writable } from "stream";
 
