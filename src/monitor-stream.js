@@ -5,13 +5,9 @@ export default class extends Transform {
     super({ readableObjectMode: true });
 
     this.lastFragment = "";
-    this.elapsedMilliseconds = 0;
     this.totalBytes = 0;
     this.totalLines = 0;
-
-    setInterval(() => {
-      this.elapsedMilliseconds++;
-    }, 1);
+    this.startTime = new Date().getTime();
   }
 
   _transform(chunk, encoding, callback) {
@@ -43,7 +39,7 @@ export default class extends Transform {
     this.totalLines++;
 
     return {
-      elapsedMilliseconds: this.elapsedMilliseconds,
+      elapsedMilliseconds: new Date().getTime() - this.startTime,
       totalBytes: this.totalBytes,
       totalLines: this.totalLines
     };
