@@ -18,25 +18,27 @@ test("Write to a monitor stream", () => {
 });
 
 test("Read from a monitor stream", done => {
+  expect.assertions(3 * 4 + 2);
+
   const stream = new MonitorStream();
+  let count = 0;
 
-  stream.write("foo\nfoo");
-  stream.write("bar\n");
-  stream.write("baz\n");
+  stream.on("data", ({ elapsedMilliseconds, totalBytes, totalLines }) => {
+    count++;
 
-  stream.on("readable", () => {
-    let chunk = stream.read();
+    expect(typeof elapsedMilliseconds).toBe("number");
+    expect(typeof totalBytes).toBe("number");
+    expect(typeof totalLines).toBe("number");
 
-    while (chunk !== null) {
-      const { elapsedMilliseconds, totalBytes, totalLines } = chunk;
-
-      expect(typeof elapsedMilliseconds).toBe("number");
-      expect(typeof totalBytes).toBe("number");
-      expect(typeof totalLines).toBe("number");
-
-      chunk = stream.read();
+    if (count === 4) {
+      expect(totalBytes).toBe(18);
+      expect(totalLines).toBe(4);
     }
 
     done();
   });
+
+  stream.write("foo\nfoo");
+  stream.write("bar\n");
+  stream.end("baz\nbaz");
 });

@@ -1,46 +1,47 @@
-import { Duplex } from "stream";
+import { Transform } from "stream";
 
-export default class extends Duplex {
+export default class extends Transform {
   constructor() {
     super({ readableObjectMode: true });
 
     this.lastFragment = "";
-    this.lines = [];
-
     this.elapsedMilliseconds = 0;
     this.totalBytes = 0;
     this.totalLines = 0;
 
-    this.interval = setInterval(() => {
+    setInterval(() => {
       this.elapsedMilliseconds++;
     }, 1);
   }
 
-  _write(chunk, encoding, callback) {
+  _transform(chunk, encoding, callback) {
     if (Buffer.isBuffer(chunk)) {
       chunk = chunk.toString();
     }
 
-    const lines = chunk.split("\n");
+    const lines = (this.lastFragment + chunk).split("\n");
 
-    this.lastFragment += lines.pop();
-    this.lines.push(...lines);
+    this.lastFragment = lines.pop();
+
+    for (const line of lines) {
+      if (!this.push(this.createReport(line + "\n"))) break;
+    }
 
     callback();
   }
 
-  _read(size) {
-    while (this.lines.length) {
-      const line = this.lines.shift();
-
-      this.totalBytes += Buffer.from(line).length;
-      this.totalLines++;
-
-      this.push(this.createReport());
+  _flush(callback) {
+    if (this.lastFragment) {
+      this.push(this.createReport(this.lastFragment));
     }
+
+    callback();
   }
 
-  createReport() {
+  createReport(line) {
+    this.totalBytes += Buffer.from(line).length;
+    this.totalLines++;
+
     return {
       elapsedMilliseconds: this.elapsedMilliseconds,
       totalBytes: this.totalBytes,
