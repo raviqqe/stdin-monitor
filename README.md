@@ -1,1 +1,1 @@
-# Hack Capital Test
+# stdin-monitor
