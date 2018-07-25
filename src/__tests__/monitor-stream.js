@@ -18,22 +18,14 @@ test("Write to a monitor stream", () => {
 });
 
 test("Read from a monitor stream", done => {
-  expect.assertions(3 * 4 + 2);
+  expect.assertions(3);
 
   const stream = new MonitorStream();
-  let count = 0;
 
   stream.on("data", ({ elapsedMilliseconds, totalBytes, totalLines }) => {
-    count++;
-
-    expect(typeof elapsedMilliseconds).toBe("number");
-    expect(typeof totalBytes).toBe("number");
-    expect(typeof totalLines).toBe("number");
-
-    if (count === 4) {
-      expect(totalBytes).toBe(18);
-      expect(totalLines).toBe(4);
-    }
+    expect(elapsedMilliseconds).toBeGreaterThan(0);
+    expect(totalBytes).toBe(18);
+    expect(totalLines).toBe(3);
 
     done();
   });

@@ -1,47 +1,52 @@
-import { Transform } from "stream";
+import { Duplex } from "stream";
 
-export default class extends Transform {
+export default class extends Duplex {
   constructor() {
     super({ readableObjectMode: true });
 
-    this.lastFragment = "";
     this.totalBytes = 0;
     this.totalLines = 0;
-    this.startTime = new Date().getTime();
+    this.startTime = this.getTime();
   }
 
-  _transform(chunk, encoding, callback) {
+  _write(chunk, encoding, callback) {
     if (Buffer.isBuffer(chunk)) {
+      this.totalBytes += chunk.length;
       chunk = chunk.toString();
+    } else {
+      this.totalBytes += Buffer.byteLength(chunk);
     }
 
-    const lines = (this.lastFragment + chunk).split("\n");
+    this.totalLines += (chunk.match(/\n/g) || []).length;
 
-    this.lastFragment = lines.pop();
+    callback();
+  }
 
-    for (const line of lines) {
-      if (!this.push(this.createReport(line + "\n"))) break;
+  _read() {
+    if (!this.timer) {
+      this.timer = setInterval(() => this.report(), 1000);
+    }
+  }
+
+  _final(callback) {
+    this.report();
+
+    if (this.timer) {
+      clearInterval(this.timer);
     }
 
     callback();
   }
 
-  _flush(callback) {
-    if (this.lastFragment) {
-      this.push(this.createReport(this.lastFragment));
-    }
-
-    callback();
-  }
-
-  createReport(line) {
-    this.totalBytes += Buffer.byteLength(line);
-    this.totalLines++;
-
-    return {
-      elapsedMilliseconds: new Date().getTime() - this.startTime,
+  report() {
+    this.push({
+      elapsedMilliseconds: this.getTime() - this.startTime,
       totalBytes: this.totalBytes,
       totalLines: this.totalLines
-    };
+    });
+  }
+
+  getTime() {
+    return new Date().getTime();
   }
 }
