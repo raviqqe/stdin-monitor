@@ -8,7 +8,7 @@ export default class extends Transform {
   _transform({ elapsedMilliseconds, totalBytes }, encoding, callback) {
     const rate = totalBytes / (elapsedMilliseconds / 1000);
 
-    this.push(`Throughput rate: ${rate} bytes / sec`);
+    this.push(`Throughput rate: ${rate.toFixed()} bytes / sec`);
 
     callback();
   }
