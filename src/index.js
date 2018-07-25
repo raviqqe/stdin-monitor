@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { stdin } from "process";
+import { argv, stdin } from "process";
 import { pipeline, Writable } from "stream";
 
 import MonitorStream from "./monitor-stream";
@@ -9,7 +9,7 @@ import SummaryStream from "./summary-stream";
 pipeline(
   stdin,
   new MonitorStream(),
-  new SummaryStream(),
+  new SummaryStream(argv[2] === "--verbose"),
   new Writable({
     decodeStrings: false,
     write(chunk, encoding, callback) {

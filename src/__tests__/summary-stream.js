@@ -21,3 +21,17 @@ test("Read from a summary stream", done => {
     done();
   });
 });
+
+test("Set verbose option", done => {
+  const stream = new SummaryStream(true);
+
+  stream.write({ elapsedMilliseconds: 333, totalBytes: 100 });
+
+  stream.on("readable", () => {
+    expect(stream.read()).toBe(
+      "I'm VERBOSE!!! - Throughput rate: 300 bytes / sec"
+    );
+
+    done();
+  });
+});
