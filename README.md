@@ -4,6 +4,8 @@
 [![Codecov](https://img.shields.io/codecov/c/github/raviqqe/stdin-monitor.svg?style=flat-square)](https://codecov.io/gh/raviqqe/stdin-monitor)
 [![License](https://img.shields.io/github/license/raviqqe/stdin-monitor.svg?style=flat-square)](LICENSE)
 
+stdin monitor command in pure Node.js
+
 ## License
 
 [MIT](LICENSE)
